@@ -1,0 +1,7 @@
+FROM python:3
+
+WORKDIR /usr/src/app/
+COPY scripts/client_xmpp.py /usr/src/app/
+RUN pip install --no-cache-dir slixmpp couchdb requests
+
+CMD [ "python", "./client_xmpp.py" ]

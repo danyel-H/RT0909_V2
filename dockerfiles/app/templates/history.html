@@ -1,0 +1,118 @@
+{#+ Page utilisée pour l'affichage de l'historique -#}
+{#+  -#}
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <!--CSS-->
+        <link href="static/index.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <!--JS-->
+        <script src="static/index.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+        <title>Historique des évènements</title>
+    </head>
+	<script type="text/javascript">
+	function change_page(num_page)
+	{
+		var elements = document.getElementsByClassName('overview_page');
+		var elements_btn = document.getElementsByClassName('btn_page');
+		for (var i = 0, length = elements.length; i < length; i++) 
+		{
+			if(i == num_page)
+			{
+				elements[i].style.display = "flex";
+				elements_btn[i].style.backgroundColor = "#3742fa";
+			}
+			else
+			{
+				elements[i].style.display = "none";
+				elements_btn[i].style.backgroundColor = "#007bff";
+			}
+		}
+	}
+	</script>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
+        <a class="navbar-brand  mb-0 h1">Portail</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <ul class="navbar-nav mr-auto">  
+          <li><a class="nav-item nav-link active" href="/">Visualisation tps réel</a></li>
+          <li><a class="nav-item nav-link active" href="/history">Historique</a></li>
+        </div>
+      </nav>
+
+    <body onload="change_page(0)">
+		{#+ Calcul le nombre de page qu'il y aura et enregistre le nombre de page -#}
+		{%+ set nb_page = namespace(value=0) -%}
+        {%+ for i in range(0, data|length) -%}
+            {#+ Si la page doit s'afficher en plus de 10 ligne, créer une nouvelle page -#}
+            {%+ if i is divisibleby 10 -%}
+                {%+ set nb_page.value = nb_page.value + 1 -%}
+            {%+ endif -%}
+        {%+ endfor -%}
+        {%+ set bgcolor = ["#bdc3c7","#ecf0f1","#1abc9c", "#3498db"] -%}
+
+        <h1>Historique des évènements</h1>
+
+        <div class ="overview_page">
+            <table class="table table-bordered" id="tab_event"  id="cores"  style="margin-top:40px; width: 90%; margin-left: auto; margin-right:auto;">
+                <thead style="background-color:#34495e; color : white;">
+                    <tr>
+                        <td>Type d'évènement</td>
+                        <td>Id du véhicule</td>
+                        <td>Direction</td>
+                        <td>Vitesse</td>
+                        <td>Heure</td>
+                    </tr>
+                </thead>
+                {%+ for i in range(0, data|length) -%}
+                    {%+ if i != 0 -%}
+                        </tr>
+                        <tr>         
+                    {%+ else -%}
+                        <tr> 
+                    {%+ endif -%}
+
+                    <tr style="background-color: {{ bgcolor[data[i]['id_e'] -1] }};">
+                        <td id="type">{{ data[i].type }}</td>
+                        <td id="identifiant">{{ data[i].stationId }}</td>
+                        <td id="direction">{{ data[i].Heading }}</td>
+                        <td id="vitesse">{{ data[i].vitesse }}</td>
+                        <td id="heure">{{ data[i].dt }}</td>
+                    </tr>       
+                    {#+ Si la page doit s'afficher en plus de 10 ligne, créer une nouvelle page -#}
+                    {%+ if (i+1) is divisibleby 10 -%}
+                        </table>
+                        </div>
+                        <div class ="overview_page">
+                        <table class="table table-bordered" id="cores" class ="overview_page" style="margin-top:40px; width: 90%; margin-left: auto; margin-right:auto;">
+                        <thead style="background-color:#34495e; color : white;">
+                            <tr>
+                                <td>Type d'évènement</td>
+                                <td>Id du véhicule</td>
+                                <td>Direction</td>
+                                <td>Vitesse</td>
+                                <td>Heure</td>
+                            </tr>
+                        </thead>
+                    {%+ endif -%}
+                {%+ endfor -%}
+                    </tr>
+            </table>
+        </div>
+
+        {%+ if nb_page.value >= 2 -%}
+			<div id="nav_page" style="margin: auto;">
+                <div style="display: table;margin: auto;">
+                {%+ for i in range(0, nb_page.value) -%}
+                    <button id="button_page" style="margin:5px;" class="btn_page btn btn-primary" onclick="change_page({{ i }})">Page {{ i + 1 }}</button>
+                {%+ endfor -%}
+                </div>
+			</div>
+		{%+ endif %}
+    </body>
+</html>

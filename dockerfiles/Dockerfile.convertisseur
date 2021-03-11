@@ -1,0 +1,8 @@
+FROM python:3
+
+WORKDIR /usr/src/app/
+COPY scripts/message_to_event.py /usr/src/app/
+COPY scripts/envoi_xmpp.py /usr/src/app/
+RUN pip install --no-cache-dir slixmpp pandas paho-mqtt
+
+CMD [ "python", "./message_to_event.py" ]

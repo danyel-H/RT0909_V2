@@ -1,0 +1,116 @@
+<html>
+    <head>
+        <title>Visualisation en temps réel</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="/static/socket.io.js"></script>
+		<script type="text/javascript">
+
+        var bgcolor = ["#bdc3c7","#ecf0f1","#1abc9c", "#3498db"]
+        var colonnes = ["stationId", "Heading", "vitesse"];
+
+    $(document).ready(function() {
+            // Connect to the Socket.IO server.
+            // The connection URL has the following format, relative to the current page:
+            //     http[s]://<domain>:<port>[/<namespace>]
+            var socket = io();
+
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+
+            // Event handler for server sent data.
+            // The callback function is invoked whenever the server emits data
+            // to the client. The data is then displayed in the "Received"
+            // section of the page.
+            socket.on('event', function(msg) {
+                data = JSON.parse(msg.data)
+                var obj = JSON.parse(data, function (key, value) {
+                    if (key == "dt") {
+                        return new Date(value).toLocaleTimeString("Paris");
+                    } else {
+                        return value;
+                    }
+                });
+                //$('#log').text('Received : ' + data).html();
+                
+                $('#table_body').text("").html();
+                
+                //console.log(obj[0])
+                tab = document.getElementById('table_body');
+                for(var i = 0; i < obj.length; i++)
+                {
+                    console.log(obj[i]);
+                    var row = tab.insertRow(0);
+                    
+                    
+                    var cell = row.insertCell();
+                    cell.innerHTML = obj[i]['type'];
+
+                    //Pour colorer les lignes selon les types d'évènements
+                    row.style.backgroundColor  = bgcolor[obj[i]['id_e'] -1];
+
+                    //On remplit les colonnes selon le type d'évènement
+                    for(var k = 0; k < colonnes.length; k++)
+                    {
+                        var cell = row.insertCell();
+                        cell.innerHTML = typeof obj[i][colonnes[k]] !== 'undefined' ? obj[i][colonnes[k]] : "/";
+                    }
+
+                    var cell = row.insertCell();
+                    cell.innerHTML = obj[i]['dt'];
+                }
+
+            });
+
+            // Handlers for the different forms in the page.
+            // These accept data from the user and send it to the server in a
+            // variety of ways
+            $('form#broadcast').submit(function(event) {
+                socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
+                return false;
+            });
+
+            $('form#disconnect').submit(function(event) {
+                socket.emit('disconnect_request');
+                return false;
+            });
+        });
+    </script>
+</head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
+<nav class="navbar navbar-expand-lg navbar-dark bg-info">
+    <a class="navbar-brand  mb-0 h1">Portail</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav mr-auto">  
+        <li><a class="nav-item nav-link active" href="/">Visualisation tps réel</a></li>
+        <li><a class="nav-item nav-link active" href="/history">Historique</a></li>
+    </div>
+    </nav>
+<body>
+    <div id="log">
+      
+    </div>
+    <table class="table table-bordered" id="tab_event" style="margin-top:40px; width: 90%; margin-left: auto; margin-right:auto;">
+        <thead style="background-color:#34495e; color : white;">
+            <td>Type d'évènement</td>
+            <td>Id du véhicule</td>
+            <td>Direction</td>
+            <td>Vitesse</td>
+            <td>Heure</td>
+        </thead>
+        <tbody id="table_body">
+            <tr>
+            </tr>  
+        </tbody>
+    </table>
+</body>
+</html>
