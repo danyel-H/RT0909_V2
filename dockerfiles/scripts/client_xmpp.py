@@ -5,8 +5,10 @@ import requests
 import json
 import couchdb
 import datetime
+import pytz
+from pytz import timezone
 
-couch = couchdb.Server('http://admin:admin@couchdb:5984/')
+couch = None
 
 class Client(ClientXMPP):
 
@@ -45,15 +47,25 @@ class Client(ClientXMPP):
                 db = couch["vehicules"]
                 doc = json_obj
 
-            dt = datetime.datetime.now()
-            dt = dt + datetime.timedelta(hours=1)
+            zone = timezone("Europe/Paris")
+
+            dt = datetime.datetime.now(zone)
             dt = dt.strftime("%d-%m-%Y à %H:%M:%S")
             doc["dt"] = dt
-            db.save(doc)
+            try:
+                db.save(doc)
+            except:
+                print("Erreur de co à la BDD")
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG,
                         format='%(levelname)-8s %(message)s')
+
+    while couch == None:
+        try:
+            couch = couchdb.Server('http://admin:admin@couchdb:5984/')
+        except:
+            print("Echec de la connexion à la BDD, reessai")
 
     if 'vehicules' not in couch:
         couch.create('vehicules')

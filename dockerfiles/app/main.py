@@ -7,6 +7,8 @@ import datetime
 import json
 import couchdb
 import pandas as pd
+import pytz
+from pytz import timezone
 
 from threading import Lock
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
@@ -44,12 +46,31 @@ def connect():
 def envoi_event(broad=True):
     global events
    
+    zone = timezone("Europe/Paris")
+
+    oui = []
+    json_bon = {
+        "id_e" : 3,
+        "Heading" : 90,
+        "dt" : "00:09:24",
+        "stationId" : 343844,
+        "type" : "Entree de vehicule",
+        "vitesse" : 110
+    }
+    oui.append(json_bon)
+    oui.append(json_bon)
+
     if(len(events) > 0):
-        created_time = datetime.datetime.now() - datetime.timedelta(minutes=5)
-        events = events[(events['dt'] > created_time) & (events['dt'] < datetime.datetime.now())]
+        created_time = datetime.datetime.now(zone) - datetime.timedelta(minutes=5)
+        events = events[(events['dt'] > created_time) & (events['dt'] < datetime.datetime.now(zone))]
+        print("#######################################")
+        print(json.dumps(events.to_json(orient="records")))
+        print("#################################")
 
     #Si tableau contenant les derniers evenement est modifier, on le revoie à tous le monde
-    socketio.emit('event', {'data': json.dumps(events.to_json(orient="records"))}, broadcast=broad)
+    #socketio.emit('event', {'data': json.dumps(events.to_json(orient="records"))}, broadcast=broad)
+    socketio.emit('event', {'data': json.dumps(oui)}, broadcast=broad)
+
 #####################################################
 #Page principal
 @app.route('/', methods=['POST', 'GET'])
@@ -87,11 +108,13 @@ def history():
 def get_event():
     global events
 
+    zone = timezone("Europe/Paris")
+
     if(request.method == 'POST'):
         #Renvoie tout les events
         print(request.json)
         new_json = json.loads(request.json)
-        new_datetime = datetime.datetime.now()
+        new_datetime = datetime.datetime.now(zone)
         new_json["dt"] = new_datetime
         new_json["type"] = type_event[new_json["id_e"] - 1]
         
@@ -109,6 +132,9 @@ def get_event():
 
 
         envoi_event()
+        return("{'msg' : 'OK'}")
+    else:
+        return("{'msg' : 'GET IS NOT SUPPORTED'}")
 
 
 if __name__ == '__main__':

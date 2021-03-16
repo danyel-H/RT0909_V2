@@ -5,7 +5,9 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<script src="/static/socket.io.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js.map"></script>
+
 		<script type="text/javascript">
 
         var bgcolor = ["#bdc3c7","#ecf0f1","#1abc9c", "#3498db"]
@@ -29,6 +31,7 @@
             // to the client. The data is then displayed in the "Received"
             // section of the page.
             socket.on('event', function(msg) {
+                console.log(msg)
                 data = JSON.parse(msg.data)
                 var obj = JSON.parse(data, function (key, value) {
                     if (key == "dt") {

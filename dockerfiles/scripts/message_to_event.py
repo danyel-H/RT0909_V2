@@ -22,6 +22,7 @@ df_denm = pd.DataFrame(columns=['stationId', 'stationType', 'cause', 'subcause',
 
 def xmpp_send(user, json):
     #Arguments : utilisateur et le mdp
+    print("Envoi vers {}".format(user))
     xmpp = Client("pass@iot.com", "test", user, json)
     xmpp.connect(address=("openfire", 5222))
     xmpp.process(forever=False)
@@ -29,19 +30,18 @@ def xmpp_send(user, json):
 def check_events():
     global df_cam,df_denm
 
-    print(df_denm.head(10))
     #Accident si 2 véhicules
     temp = df_denm[df_denm["cause"] == 4]
     if(len(temp["stationId"].unique()) >= 2):
         json_event = {"id_e" : 2}
-        xmpp_send("serv@openfire", json.dumps(json_event))
-        xmpp_send("bdd@openfire", json.dumps(json_event))
+        xmpp_send("serv@60ef9ac3771f", json.dumps(json_event))
+        xmpp_send("bdd@60ef9ac3771f", json.dumps(json_event))
 
     #Embouteillage si 3 véhicules < 90
     if(len(df_cam[df_cam["vitesse"] < 90]) >= 3):
         json_event = {"id_e" : 1}
-        xmpp_send("serv@openfire", json.dumps(json_event))
-        xmpp_send("bdd@openfire", json.dumps(json_event))
+        xmpp_send("serv@60ef9ac3771f", json.dumps(json_event))
+        xmpp_send("bdd@60ef9ac3771f", json.dumps(json_event))
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -74,8 +74,8 @@ def on_message(client, userdata, msg):
                     print("Sortie de véhicule ! vers l'ouest")
                     #Envoi DENM de sortie
                     json_event = {"id_e" : 4, "stationId" : json_msg["stationId"], "Heading" : json_msg["Heading"], "vitesse" : json_msg["vitesse"]}
-                    xmpp_send("serv@openfire", json.dumps(json_event))
-                    xmpp_send("bdd@openfire", json.dumps(json_event))
+                    xmpp_send("serv@60ef9ac3771f", json.dumps(json_event))
+                    xmpp_send("bdd@60ef9ac3771f", json.dumps(json_event))
 
                     #On drop la ligne pandas du véhicule
                     df_cam = df_cam[df_cam["stationId"] != json_msg["stationId"]]
@@ -86,8 +86,8 @@ def on_message(client, userdata, msg):
                     print("Sortie de véhicule ! vers l'est")
                     #Envoi DENM de sortie
                     json_event = {"id_e" : 4, "stationId" : json_msg["stationId"], "Heading" : json_msg["Heading"], "vitesse" : json_msg["vitesse"]}
-                    xmpp_send("serv@openfire", json.dumps(json_event))
-                    xmpp_send("bdd@openfire", json.dumps(json_event))
+                    xmpp_send("serv@60ef9ac3771f", json.dumps(json_event))
+                    xmpp_send("bdd@60ef9ac3771f", json.dumps(json_event))
 
                     #On drop la ligne pandas du véhicule
                     df_cam = df_cam[df_cam["stationId"] != json_msg["stationId"]]
@@ -98,8 +98,8 @@ def on_message(client, userdata, msg):
             df_cam = df_cam.append(pd.json_normalize(json_msg))
             #On envoie un message parce qu'il est entré
             json_event = {"id_e" : 3, "stationId" : json_msg["stationId"], "Heading" : json_msg["Heading"], "vitesse" : json_msg["vitesse"]}
-            xmpp_send("serv@openfire", json.dumps(json_event))
-            xmpp_send("bdd@openfire", json.dumps(json_event))
+            xmpp_send("serv@60ef9ac3771f", json.dumps(json_event))
+            xmpp_send("bdd@60ef9ac3771f", json.dumps(json_event))
 
     else:
         df_denm = df_denm.append(pd.json_normalize(json_msg))
