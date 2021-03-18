@@ -8,9 +8,8 @@ Ce projet à été développé par :
 
 ## Description du projet
 
-Ceci est une application de tracking sportif, chaque utilisateur dispose d'un terminal qui lui permet, lorsque il commence une activité, de sélectionner ce qu'il veut faire et envoyer au serveur son parcours. 
-L'utilsateur pourra ensuite allez voir ses performances sur le site web.
-Un système d'administration est aussi présent, attention aux petits malins.
+Ce projet vise à simuler une architecture fonctionnant grâce à l'Internet des Objets. Son but est de simuler un groupe de véhicules dans une zone précise communiquant leurs positions via le protocole MQTT à une passerelle qui se chargera de convertir ses positions en évènement avant de les transmettre via le protocole XMPP à un site Web et une Base de données. 
+La finalité est que l'utilisateur puisse observer les évènements en temps réel sur le site Web, il a aussi un accès à l'historique.
 
 ## Prérequis
 
