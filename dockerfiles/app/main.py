@@ -48,17 +48,6 @@ def envoi_event(broad=True):
    
     zone = timezone("Europe/Paris")
 
-    oui = []
-    json_bon = {
-        "id_e" : 3,
-        "Heading" : 90,
-        "dt" : "00:09:24",
-        "stationId" : 343844,
-        "type" : "Entree de vehicule",
-        "vitesse" : 110
-    }
-    oui.append(json_bon)
-    oui.append(json_bon)
 
     if(len(events) > 0):
         created_time = datetime.datetime.now(zone) - datetime.timedelta(minutes=5)
@@ -69,7 +58,7 @@ def envoi_event(broad=True):
 
     #Si tableau contenant les derniers evenement est modifier, on le revoie à tous le monde
     #socketio.emit('event', {'data': json.dumps(events.to_json(orient="records"))}, broadcast=broad)
-    socketio.emit('event', {'data': json.dumps(oui)}, broadcast=broad)
+    socketio.emit('event', {'data': json.dumps(events.to_json(orient="records"))}, broadcast=broad)
 
 #####################################################
 #Page principal
@@ -138,4 +127,4 @@ def get_event():
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host="0.0.0.0", port=3678)
+    socketio.run(app, debug=True, host="0.0.0.0", port=80)

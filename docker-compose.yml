@@ -5,10 +5,6 @@ services:
     image: vehicules/iot
     depends_on:
       - "mosquitto"
-    deploy:
-        replicas: 1
-        restart_policy:
-          condition: on-failure
     networks:
         - webnet
   mosquitto:
@@ -18,10 +14,6 @@ services:
       - ${PWD}/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
       - "1883:1883"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     networks:
         - webnet
   convertisseur:
@@ -30,10 +22,6 @@ services:
     depends_on:
       - "openfire"
       - "mosquitto"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     networks:
         - webnet
   openfire:
@@ -42,10 +30,6 @@ services:
     ports:
       - "9090:9090"
       - "5222:5222"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     networks:
         - webnet
   xmppweb:
@@ -54,10 +38,6 @@ services:
     depends_on:
       - "web"
       - "openfire"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     networks:
         - webnet
   xmppbdd:
@@ -66,10 +46,6 @@ services:
     depends_on:
       - "couchdb"
       - "openfire"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     networks:
         - webnet
   couchdb:
@@ -77,10 +53,6 @@ services:
     image: couchdb
     ports:
       - "5984:5984"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     environment:
       - "COUCHDB_USER=admin"
       - "COUCHDB_PASSWORD=admin"
@@ -89,10 +61,6 @@ services:
   web:
     hostname: "web"
     image: flask/iot
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     ports:
       - "3678:80"
     networks:

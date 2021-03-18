@@ -136,6 +136,9 @@ async def actionVehicle(v):
     
 async def runVehicles(number=0):
     #Si aucun nombre n'est indiqué, on tourne à l'infini
+    print("Attente avant lancement des vehicules")
+    await asyncio.sleep(60)
+    print("Début lancement véhicule")
     if(number > 0):
         for i in range(0, number):
             print("Ajout d'un Vehicule")

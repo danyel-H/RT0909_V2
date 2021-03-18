@@ -7,6 +7,7 @@ import couchdb
 import datetime
 import pytz
 from pytz import timezone
+import time
 
 couch = None
 
@@ -67,12 +68,19 @@ if __name__ == '__main__':
         except:
             print("Echec de la connexion à la BDD, reessai")
 
-    if 'vehicules' not in couch:
-        couch.create('vehicules')
-    if 'embouteillages' not in couch:
-        couch.create('embouteillages')
-    if 'accidents' not in couch:
-        couch.create('accidents')
+    bdd = False
+    while not bdd:
+        try:
+            if 'vehicules' not in couch:
+                couch.create('vehicules')
+            if 'embouteillages' not in couch:
+                couch.create('embouteillages')
+            if 'accidents' not in couch:
+                couch.create('accidents')
+            bdd = True
+        except:
+            time.sleep(5)
+            print("Echec de création des BDD, reessai")
 
     xmpp = Client("bdd@iot.com", "test")
     xmpp.connect(address=("openfire", 5222))

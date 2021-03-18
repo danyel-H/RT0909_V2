@@ -33,6 +33,7 @@ def check_events():
     #Accident si 2 véhicules
     temp = df_denm[df_denm["cause"] == 4]
     if(len(temp["stationId"].unique()) >= 2):
+        print("Accident !!!!!!!!")
         json_event = {"id_e" : 2}
         xmpp_send("serv@60ef9ac3771f", json.dumps(json_event))
         xmpp_send("bdd@60ef9ac3771f", json.dumps(json_event))

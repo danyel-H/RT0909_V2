@@ -1,6 +1,12 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.8
+FROM python:3
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /usr/src/app/
+RUN pip install --no-cache-dir -r /usr/src/app/requirements.txt
 
-COPY ./app /app
+COPY ./app /usr/src/app/
+
+# tell the port number the container should expose
+EXPOSE 3678
+
+# run the application
+CMD ["python", "/usr/src/app/main.py"]
