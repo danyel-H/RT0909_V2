@@ -26,9 +26,13 @@ Si jamais il n'était pas possible de libérer le port 3678, rendez vous dans le
 
 ## Lancement de l'application
 
-Après avoir installé docker et docker-compose, rendez vous dans le fichier "dockerfiles" et lancez le script "build-dockerfiles.sh", celui-ci va build toutes les images docker nécessaires à l'exécution du projet. Une fois vous être assuré que tout s'est bien executé, revenez dans le dossier "docker" et lancez un simple
+Après avoir installé docker et docker-compose, rendez vous dans le dossier "dockerfiles" et lancez le script :
+
+> ./build-dockerfiles.sh
+
+**Attention à être soit dans le groupe docker, soit à lancer en su**, celui-ci va build toutes les images docker nécessaires à l'exécution du projet. Une fois vous être assuré que tout s'est bien executé, revenez dans le dossier "docker" et lancez un simple
 
 > docker-compose up
 
-L'application devrait alors se préparer puis se lancer, rendez vous ensuite sur le port 3678 de la machine qui a lancé le docker-compose, un site Web devrait apparaitre, vous pourrez y observer les véhicules rentrer, sortir, et se rentrer dedans, provoquant ainsi de lourds dégâts et quelques embouteillages
+L'application devrait alors se préparer puis se lancer, attendez quelques minutes puis rendez vous ensuite sur le port 3678 de la machine qui a lancé le docker-compose, un site Web devrait apparaitre, vous pourrez y observer les véhicules rentrer, sortir, et se rentrer dedans, provoquant ainsi de lourds dégâts et quelques embouteillages
 

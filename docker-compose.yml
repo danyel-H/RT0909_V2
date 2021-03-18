@@ -11,7 +11,7 @@ services:
     hostname: "mosquitto"
     image: eclipse-mosquitto
     volumes:
-      - ${PWD}/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - "./mosquitto.conf:/mosquitto/config/mosquitto.conf"
     ports:
       - "1883:1883"
     networks:

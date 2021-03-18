@@ -7,6 +7,7 @@ import datetime
 import json
 import couchdb
 import pandas as pd
+import numpy as np
 import pytz
 from pytz import timezone
 
@@ -28,6 +29,7 @@ type_event = ["Embouteillage", "Accident", "Entree de vehicule", "Sortie de vehi
 events = pd.DataFrame(columns=['id_e', 'stationId', 'Heading', 'vitesse'])
 accidents = []
 embouteillages = []
+nb_vehicules = 0
 
 ################################################################################
 ##Exemple pour SocketIO##
@@ -44,21 +46,26 @@ def connect():
 
 #################################################################################
 def envoi_event(broad=True):
-    global events
+    global events, nb_vehicules
    
     zone = timezone("Europe/Paris")
 
+    vit_moy_entree = "Pas de données"
+    vit_moy_sortie = "Pas de données"
+    if(len(events[events["id_e"] == 3]) > 0):
+        vit_moy_entree = events[events["id_e"] == 3]["vitesse"].mean()
+    if(len(events[events["id_e"] == 4]) > 0):
+        vit_moy_sortie = events[events["id_e"] == 4]["vitesse"].mean()
 
     if(len(events) > 0):
         created_time = datetime.datetime.now(zone) - datetime.timedelta(minutes=5)
         events = events[(events['dt'] > created_time) & (events['dt'] < datetime.datetime.now(zone))]
-        print("#######################################")
-        print(json.dumps(events.to_json(orient="records")))
-        print("#################################")
+    
+    events = events.sort_values(by="dt", ascending=True)
 
+    stats = json.dumps({'vit_moy_entree' : vit_moy_entree, 'vit_moy_sortie' : vit_moy_sortie, 'nb_vehicules' : nb_vehicules})
     #Si tableau contenant les derniers evenement est modifier, on le revoie à tous le monde
-    #socketio.emit('event', {'data': json.dumps(events.to_json(orient="records"))}, broadcast=broad)
-    socketio.emit('event', {'data': json.dumps(events.to_json(orient="records"))}, broadcast=broad)
+    socketio.emit('event', {'data': events.to_json(orient="records"), 'stats' : stats }, broadcast=broad)
 
 #####################################################
 #Page principal
@@ -72,9 +79,25 @@ def history():
     global type_event
     db = couch["vehicules"]
     data = []
+    entree = []
+    sorties = []
+    nb_vec = 0
     for docid in db.view('_all_docs', include_docs=True):
         docid["doc"]["type"] = type_event[docid["doc"]["id_e"] -1 ]
+        if(docid["doc"]["id_e"] == 3):
+            nb_vec = nb_vec +1
+            entree.append(docid["doc"]["vitesse"])
+        else:
+            sorties.append(docid["doc"]["vitesse"])
         data.append(docid["doc"])
+
+    #Statistiques
+    vit_moy_entree = "Pas de données"
+    vit_moy_sortie = "Pas de données"
+    if(len(entree) > 0):
+        vit_moy_entree = np.mean(entree)
+    if(len(sorties) > 0):
+        vit_moy_sortie = np.mean(sorties)
 
     #On récupère les accidents
     db = couch["accidents"]
@@ -90,12 +113,13 @@ def history():
         doc["type"] = type_event[doc["id_e"] -1 ]
         data.append(doc)
 
-        
-    return render_template('history.html', data=data)
+    stats = {'vit_moy_entree' : vit_moy_entree, 'vit_moy_sortie' : vit_moy_sortie, 'nb_vehicules' : nb_vec}    
+ 
+    return render_template('history.html', data=data, stats=stats)
 
 @app.route('/get_event', methods=['POST'])
 def get_event():
-    global events
+    global events, nb_vehicules
 
     zone = timezone("Europe/Paris")
 
@@ -117,6 +141,10 @@ def get_event():
                 events = events.append(pd.json_normalize(new_json))
 
         else:
+            if(new_json["id_e"] == 3):
+                nb_vehicules = nb_vehicules+1
+            else:
+                nb_vehicules = nb_vehicules-1
             events = events.append(pd.json_normalize(new_json))
 
 

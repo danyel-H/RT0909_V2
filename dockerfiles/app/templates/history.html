@@ -56,7 +56,7 @@
         {%+ endfor -%}
         {%+ set bgcolor = ["#bdc3c7","#ecf0f1","#1abc9c", "#3498db"] -%}
 
-        <h1 style="text-align: center; width: 100%;">Évènements de la D401 aux abords de La Trousse</h1>
+        <h1 style="text-align: center; width: 100%;">Historique</h1>
 
         <div class ="overview_page">
             <table class="table table-bordered" id="tab_event"  id="cores"  style="margin-top:40px; width: 90%; margin-left: auto; margin-right:auto;">
@@ -114,5 +114,11 @@
                 </div>
 			</div>
 		{%+ endif %}
+
+        <div id="stats" style="margin-top:40px; width: 90%; text-align: center;margin-left: auto; margin-right:auto;">
+                <b>Nombre de véhicules totaux ayant circulés : </b><span id="nb_vehicules">{{ stats.nb_vehicules }}</span><br/>
+                <b>Vitesse moyenne des véhicules entrants : </b><span id="vit_moy_entree">{{ stats.vit_moy_entree }}</span><br/>
+                <b>Vitesse moyenne des véhicules sortants : </b><span id="vit_moy_sortie">{{ stats.vit_moy_sortie }}</span><br/>
+        </div>
     </body>
 </html>
