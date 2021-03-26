@@ -35,4 +35,5 @@ Après avoir installé docker et docker-compose, rendez vous dans le dossier "do
 > docker-compose up
 
 L'application devrait alors se préparer puis se lancer, attendez quelques minutes puis rendez vous ensuite sur le port 3678 de la machine qui a lancé le docker-compose, un site Web devrait apparaitre, vous pourrez y observer les véhicules rentrer, sortir, et se rentrer dedans, provoquant ainsi de lourds dégâts et quelques embouteillages
+Le simulateur de véhicules attend une petite minute avant de se lancer, il est donc normal si vous devez attendre un peu. Dans le cas où rien n'apparait même après avoir attendu, pensez à rafraichir la page.
 
