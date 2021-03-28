@@ -30,7 +30,7 @@ Après avoir installé docker et docker-compose, rendez vous dans le dossier "do
 
 > ./build-dockerfiles.sh
 
-**Attention à être soit dans le groupe docker, soit à lancer en su**, celui-ci va build toutes les images docker nécessaires à l'exécution du projet. Une fois vous être assuré que tout s'est bien executé, revenez dans le dossier "docker" et lancez un simple
+**Attention à être soit dans le groupe docker, soit à lancer en su**, celui-ci va build toutes les images docker nécessaires à l'exécution du projet. Une fois vous être assuré que tout s'est bien executé, revenez à la base du projet et lancez un simple
 
 > docker-compose up
 
